@@ -12,6 +12,13 @@ public class GameManager {
         addGame("Persona 5", "JRPG", 2016);
         addGame("The Legend of Zelda: Breath of the Wild", "Action-Adventure", 2017);
         addGame("Super Mario Odyssey", "Platformer", 2017);
+        addGame("Dark Souls", "Action RPG", 2011);
+        addGame("The Witcher 3: Wild Hunt", "Action RPG", 2015);
+        addGame("Overwatch", "First-Person Shooter", 2016);
+        addGame("Minecraft", "Sandbox", 2011);
+        addGame("Stardew Valley", "Simulation RPG", 2016);
+        addGame("Celeste", "Platformer", 2018);
+        addGame("Hollow Knight", "Metroidvania", 2017);
     }
 
     public void addGame(String name, String genre, int releaseYear) {
@@ -87,7 +94,7 @@ public void searchGame(String name) {
 
     public void listGames() {
         if (games.isEmpty()) {
-            System.out.println("No games available.");
+            System.out.println("No hay juegos disponibles.");
         } else {
             games.values().forEach(game -> System.out.println("═════════════════════════════════" + "\n"+"  ═ Nombre: " + game.getName() + "\n" + "  ═ Género: " + game.getGenre() + "\n" + "  ═ Año de lanzamiento: " + game.getReleaseYear() + "\n" + "═════════════════════════════════"));
         }
@@ -96,20 +103,20 @@ public void searchGame(String name) {
     public void sortGamesByName() {
         games.values().stream()
             .sorted(Comparator.comparing(Game::getName))
-            .forEach(game -> System.out.println(game.getName() + "\n" + game.getGenre() + "\n" + game.getReleaseYear()));
+            .forEach(game -> System.out.println(("═════════════════════════════════" + "\n"+"  ═ Nombre: " + game.getName() + "\n" + "  ═ Género: " + game.getGenre() + "\n" + "  ═ Año de lanzamiento: " + game.getReleaseYear() + "\n" + "═════════════════════════════════")));
     }
 
     public void sortGamesByGenre() {
         games.values().stream()
             .sorted(Comparator.comparing(Game::getGenre))
-            .forEach(game -> System.out.println(game.getName() + "\n" + game.getGenre() + "\n" + game.getReleaseYear()));
+            .forEach(game -> System.out.println(("═════════════════════════════════" + "\n"+"  ═ Nombre: " + game.getName() + "\n" + "  ═ Género: " + game.getGenre() + "\n" + "  ═ Año de lanzamiento: " + game.getReleaseYear() + "\n" + "═════════════════════════════════")));
     }
 
 
     public void sortGamesByReleaseYear() {
         games.values().stream()
             .sorted(Comparator.comparingInt(Game::getReleaseYear))
-            .forEach(game -> System.out.println(game.getName() + "\n" + game.getReleaseYear()));
+            .forEach(game -> System.out.println("═════════════════════════════════"+"\n"+game.getName() + "\n" + game.getReleaseYear()+"\n"+"═════════════════════════════════"));
     }
 
     public Game getGameIgnoreCase(String name) {

@@ -206,7 +206,8 @@ public class CLI {
                     cleanScreen();
                     break;
                 case 6:
-                    gameManager.sortGamesByName();
+                    cleanScreen();
+                    menuSort();
                     break;
                 case 7:
                     System.out.println("Saliendo...");
@@ -247,7 +248,69 @@ public class CLI {
         System.out.println("║ 1. Por Nombre                                    ║");
         System.out.println("║ 2. Por Género                                    ║");
         System.out.println("║ 3. Por Año de Lanzamiento                        ║");
+        System.out.println("║ 4. Volver al Menú Principal                      ║");
         System.out.println("╚══════════════════════════════════════════════════╝");
     }
 
-}
+    public static void menuSort(){
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        int option = -1;
+        while(option!=4){
+            showMenuSort();
+                System.out.print("Seleccione una opción: ");
+                String input = scanner.nextLine();
+                if (input.isEmpty()) {
+                    System.out.println("Por favor, no deje el campo vacío e ingrese un número a continuación:");
+                    continue;
+                }
+                try {
+                    option = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("Por favor, ingrese un carácter válido, le recomiendo que ingrese un número del 1 al 4.");
+                    continue;
+                }
+                if (option >= 1 && option <= 4) {
+                    break;
+                }
+                System.out.println("Opción inválida. Por favor, seleccione una opción del 1 al 4.");
+            }
+            switch (option) {
+                case 1:
+                    cleanScreen();
+                    System.out.println("╔══════════════════════════════════════════════════╗");
+                    System.out.println("║               ORDENANDO POR NOMBRE               ║");
+                    System.out.println("╚══════════════════════════════════════════════════╝");
+                    gameManager.sortGamesByName();
+                    System.out.print("Presione Enter para volver al menú principal...");
+                    scanner.nextLine();
+                    cleanScreen();
+                    break;
+                case 2:
+                    cleanScreen();
+                    System.out.println("╔══════════════════════════════════════════════════╗");
+                    System.out.println("║               ORDENANDO POR GÉNERO               ║");
+                    System.out.println("╚══════════════════════════════════════════════════╝");
+                    gameManager.sortGamesByGenre();
+                    System.out.print("Presione Enter para volver al menú principal...");
+                    scanner.nextLine();
+                    cleanScreen();
+                    break;
+                case 3:
+                    cleanScreen();
+                    System.out.println("╔══════════════════════════════════════════════════╗");
+                    System.out.println("║               ORDENANDO POR AÑO                  ║");
+                    System.out.println("╚══════════════════════════════════════════════════╝");
+                    gameManager.sortGamesByReleaseYear();
+                    System.out.println("Presione Enter para volver al menú principal...");
+                    scanner.nextLine();
+                    cleanScreen();
+                    break;
+                case 4:
+                    cleanScreen();
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+            }
+        }
+    }
