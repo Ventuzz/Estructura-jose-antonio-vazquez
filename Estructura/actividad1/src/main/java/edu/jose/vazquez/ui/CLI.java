@@ -231,6 +231,7 @@ public class CLI {
     public static void cleanScreen(){
             try {
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                //new ProcessBuilder("cmd", "/c", "chcp 65001").inheritIO().start().waitFor();
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
