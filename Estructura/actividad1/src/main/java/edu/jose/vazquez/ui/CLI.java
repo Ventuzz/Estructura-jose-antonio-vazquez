@@ -9,6 +9,7 @@ public class CLI {
 
     public static void runApp(){
         cleanScreen();
+        showEmoji();
         java.util.Scanner scanner = new java.util.Scanner(System.in);
         int option = -1;
         while (option != 7) {
@@ -17,19 +18,19 @@ public class CLI {
                 System.out.print("Seleccione una opción: ");
                 String input = scanner.nextLine();
                 if (input.isEmpty()) {
-                    System.out.println("Por favor, no deje el campo vacío e ingrese un número a continuación:");
+                    System.out.println("❌ Por favor, no deje el campo vacío e ingrese un número a continuación. ❌");
                     continue;
                 }
                 try {
                     option = Integer.parseInt(input);
                 } catch (NumberFormatException e) {
-                    System.out.println("Por favor, ingrese un carácter válido, le recomiendo que ingrese un número del 1 al 7.");
+                    System.out.println("❌ Por favor, ingrese un carácter válido, le recomiendo que ingrese un número del 1 al 7. ❌");
                     continue;
                 }
                 if (option >= 1 && option <= 7) {
                     break;
                 }
-                System.out.println("Opción inválida. Por favor, seleccione una opción del 1 al 7.");
+                System.out.println("❌ Opción inválida. Por favor, seleccione una opción del 1 al 7. ❌");
             }
             switch (option) {
                 case 1:
@@ -44,7 +45,7 @@ public class CLI {
                         if (!name.trim().isEmpty()) {
                             break;
                         }
-                        System.out.println("El nombre del juego no puede estar vacío.");
+                        System.out.println("❌ El nombre del juego no puede estar vacío. ❌");
                     }
                     String genre = "";
                     while (true) {
@@ -53,7 +54,7 @@ public class CLI {
                         if (!genre.trim().isEmpty()) {
                             break;
                         }
-                        System.out.println("El género del juego no puede estar vacío.");
+                        System.out.println("❌ El género del juego no puede estar vacío. ❌");
                     }
                     int releaseYear = -1;
                     while (true) {
@@ -64,18 +65,26 @@ public class CLI {
                             if (releaseYear > 0) {
                                 break;
                             }
-                            System.out.println("Por favor, ingrese un año válido, no puede ser negativo.");
+                            System.out.println("❌ Por favor, ingrese un año válido, no puede ser negativo. ❌");
                         } catch (NumberFormatException e) {
-                            System.out.println("Por favor, ingrese un número válido, no puede estar vacío ni contener letras.");
+                            System.out.println("❌ Por favor, ingrese un número válido, no puede estar vacío ni contener letras. ❌");
                         }
                     }
+                    if (gameManager.getGameIgnoreCase(name) != null) {
+                        System.out.println("❌ El juego ya existe. ❌");
+                        System.out.print("Presione Enter para volver al menú principal...");
+                        scanner.nextLine();
+                        cleanScreen();
+                        break;
+                    }
+                    
                     gameManager.addGame(name, genre, releaseYear);
                     System.out.println("╔══════════════════════════════════════════════════╗");
-                    System.out.println("║            JUEGO AGREGADO EXITOSAMENTE           ║");
+                    System.out.println("║        ✅ JUEGO AGREGADO EXITOSAMENTE ✅        ║");
                     System.out.println("╚══════════════════════════════════════════════════╝");
-                    System.out.println("  ═ Nombre: " + name);
-                    System.out.println("  ═ Género: " + genre);
-                    System.out.println("  ═ Año de lanzamiento: " + releaseYear);
+                    System.out.println("  ♦ Nombre: " + name);
+                    System.out.println("  ♦ Género: " + genre);
+                    System.out.println("  ♦ Año de lanzamiento: " + releaseYear);
                     System.out.println();
                     System.out.print("Presione Enter para volver al menú principal...");
                     scanner.nextLine();
@@ -84,7 +93,7 @@ public class CLI {
                 case 2:
                     cleanScreen();
                     System.out.println("╔══════════════════════════════════════════════════╗");
-                    System.out.println("║               ELIMINAR JUEGO                     ║");
+                    System.out.println("║            ❌ ELIMINAR JUEGO  ❌                ║");
                     System.out.println("╚══════════════════════════════════════════════════╝");
                     System.out.println("Estos son los juegos disponibles:");
                     gameManager.listGames();
@@ -93,7 +102,7 @@ public class CLI {
                         System.out.print("Ingrese el nombre del juego a eliminar: ");
                         removeName = scanner.nextLine().trim(); 
                         if (removeName.isEmpty()) {
-                            System.out.println("El nombre no puede estar vacío. Intente nuevamente.");
+                            System.out.println("❌ El nombre no puede estar vacío. Intente nuevamente. ❌");
                         } else {
                             break; 
                         }
@@ -106,7 +115,7 @@ public class CLI {
                 case 3:
                     cleanScreen();
                     System.out.println("╔══════════════════════════════════════════════════╗");
-                    System.out.println("║               ACTUALIZAR JUEGO                   ║");
+                    System.out.println("║               ACTUALIZAR JUEGO   🤔              ║");
                     System.out.println("╚══════════════════════════════════════════════════╝");
                     gameManager.listGames();
                     String updateName;
@@ -114,7 +123,7 @@ public class CLI {
                         System.out.print("Ingrese el nombre del juego a actualizar: ");
                         updateName = scanner.nextLine().trim();
                         if (updateName.isEmpty()) {
-                            System.out.println("El nombre no puede estar vacío.");
+                            System.out.println("❌ El nombre no puede estar vacío. ❌");
                             continue;
                         }
                         break;
@@ -123,18 +132,18 @@ public class CLI {
                     Game gameToUpdate = gameManager.getGameIgnoreCase(updateName);
                     if (gameToUpdate == null) {
                         System.out.println("╔══════════════════════════════════════════════════╗");
-                        System.out.println("║                JUEGO NO ENCONTRADO               ║");
+                        System.out.println("║           ❌ JUEGO NO ENCONTRADO ❌             ║");
                         System.out.println("╚══════════════════════════════════════════════════╝");
                         System.out.print("Presione Enter para volver al menú principal...");
                         scanner.nextLine();
                         break;
                     }else{
                         System.out.println("╔══════════════════════════════════════════════════╗");
-                        System.out.println("║               JUEGO ENCONTRADO                   ║");
+                        System.out.println("║           ✅ JUEGO ENCONTRADO ✅                ║");
                         System.out.println("╚══════════════════════════════════════════════════╝");
-                        System.out.println("  ═ Nombre: " + gameToUpdate.getName());
-                        System.out.println("  ═ Género: " + gameToUpdate.getGenre());
-                        System.out.println("  ═ Año de lanzamiento: " + gameToUpdate.getReleaseYear());
+                        System.out.println("  ♦ Nombre: " + gameToUpdate.getName());
+                        System.out.println("  ♦ Género: " + gameToUpdate.getGenre());
+                        System.out.println("  ♦ Año de lanzamiento: " + gameToUpdate.getReleaseYear());
                         System.out.println();
                     }
                     String newGenre;
@@ -142,7 +151,7 @@ public class CLI {
                         System.out.print("Ingrese el nuevo género del juego: ");
                         newGenre = scanner.nextLine().trim();
                         if (newGenre.isEmpty()) {
-                            System.out.println("El género no puede estar vacío.");
+                            System.out.println("❌ El género no puede estar vacío. ❌");
                             continue;
                         }
                         break;
@@ -155,19 +164,19 @@ public class CLI {
                         try {
                             newReleaseYear = Integer.parseInt(yearStr);
                             if (newReleaseYear <= 0) {
-                                System.out.println("El año debe ser mayor que 0.");
+                                System.out.println("❌ El año debe ser mayor que 0. ❌");
                                 continue;
                             }
                             break;
                         } catch (NumberFormatException e) {
-                            System.out.println("Ingrese un número válido para el año.");
+                            System.out.println("❌ Ingrese un número válido para el año. ❌");
                         }
                     }
 
                     gameManager.updateGame(updateName, newGenre, newReleaseYear);
 
                     System.out.println("╔══════════════════════════════════════════════════╗");
-                    System.out.println("║          JUEGO ACTUALIZADO EXITOSAMENTE          ║");
+                    System.out.println("║       ✅ JUEGO ACTUALIZADO EXITOSAMENTE ✅      ║");
                     System.out.println("╚══════════════════════════════════════════════════╝");
                     System.out.print("Presione Enter para volver al menú principal...");
                     scanner.nextLine();
@@ -186,7 +195,7 @@ public class CLI {
                             gameManager.searchGame(searchName);
                             break;
                         } else {
-                            System.out.println("El nombre del juego no puede estar vacío.");
+                            System.out.println("❌ El nombre del juego no puede estar vacío. ❌");
                         }
                     }
                     System.out.println();
@@ -213,7 +222,7 @@ public class CLI {
                     System.out.println("Saliendo...");
                     break;
                 default:
-                    System.out.println("Opción no válida.");
+                    System.out.println("❌ Opción no válida. ❌");
             }
         }
         
@@ -252,6 +261,13 @@ public class CLI {
         System.out.println("╚══════════════════════════════════════════════════╝");
     }
 
+    public static void showEmoji(){
+        try {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     public static void menuSort(){
         java.util.Scanner scanner = new java.util.Scanner(System.in);
         int option = -1;
@@ -260,19 +276,19 @@ public class CLI {
                 System.out.print("Seleccione una opción: ");
                 String input = scanner.nextLine();
                 if (input.isEmpty()) {
-                    System.out.println("Por favor, no deje el campo vacío e ingrese un número a continuación:");
+                    System.out.println("❌ Por favor, no deje el campo vacío e ingrese un número a continuación. ❌");
                     continue;
                 }
                 try {
                     option = Integer.parseInt(input);
                 } catch (NumberFormatException e) {
-                    System.out.println("Por favor, ingrese un carácter válido, le recomiendo que ingrese un número del 1 al 4.");
+                    System.out.println("❌ Por favor, ingrese un carácter válido, le recomiendo que ingrese un número del 1 al 4. ❌");
                     continue;
                 }
                 if (option >= 1 && option <= 4) {
                     break;
                 }
-                System.out.println("Opción inválida. Por favor, seleccione una opción del 1 al 4.");
+                System.out.println("❌ Opción inválida. Por favor, seleccione una opción del 1 al 4. ❌");
             }
             switch (option) {
                 case 1:
@@ -310,7 +326,7 @@ public class CLI {
                     System.out.println("Volviendo al menú principal...");
                     break;
                 default:
-                    System.out.println("Opción no válida.");
+                    System.out.println("❌ Opción no válida. ❌");
             }
         }
     }

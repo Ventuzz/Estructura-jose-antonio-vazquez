@@ -32,16 +32,16 @@ public class GameManager {
         if (key.equalsIgnoreCase(name)) {
             keyToRemove = key;
             System.out.println("╔══════════════════════════════════════════════════╗");
-            System.out.println("║            JUEGO ELIMINADO EXITOSAMENTE          ║");
+            System.out.println("║        ✅ JUEGO ELIMINADO EXITOSAMENTE  ✅      ║");
             System.out.println("╚══════════════════════════════════════════════════╝");
-            System.out.println("  ═ Nombre: " + keyToRemove);
+            System.out.println("  ♦ Nombre: " + keyToRemove);
             break;
         }
     }
 
     if (keyToRemove == null) {
         System.out.println("╔══════════════════════════════════════════════════╗");
-        System.out.println("║                JUEGO NO ENCONTRADO               ║");
+        System.out.println("║          ❌   JUEGO NO ENCONTRADO  ❌           ║");
         System.out.println("╚══════════════════════════════════════════════════╝");
         return;
     }
@@ -80,36 +80,36 @@ public void searchGame(String name) {
 
     if (foundGame != null) {
         System.out.println("╔══════════════════════════════════════════════════╗");
-        System.out.println("║               JUEGO ENCONTRADO                   ║");
+        System.out.println("║            ✅ JUEGO ENCONTRADO  ✅              ║");
         System.out.println("╚══════════════════════════════════════════════════╝");
-        System.out.println("  ═ Nombre: " + foundGame.getName());
-        System.out.println("  ═ Género: " + foundGame.getGenre());
-        System.out.println("  ═ Año de lanzamiento: " + foundGame.getReleaseYear());
+        System.out.println("  ♦ Nombre: " + foundGame.getName());
+        System.out.println("  ♦ Género: " + foundGame.getGenre());
+        System.out.println("  ♦ Año de lanzamiento: " + foundGame.getReleaseYear());
     } else {
         System.out.println("╔══════════════════════════════════════════════════╗");
-        System.out.println("║                JUEGO NO ENCONTRADO               ║");
+        System.out.println("║           ❌  JUEGO NO ENCONTRADO  ❌           ║");
         System.out.println("╚══════════════════════════════════════════════════╝");
     }
 }
 
     public void listGames() {
         if (games.isEmpty()) {
-            System.out.println("No hay juegos disponibles.");
+            System.out.println("❌ No hay juegos disponibles. ❌");
         } else {
-            games.values().forEach(game -> System.out.println("═════════════════════════════════" + "\n"+"  ═ Nombre: " + game.getName() + "\n" + "  ═ Género: " + game.getGenre() + "\n" + "  ═ Año de lanzamiento: " + game.getReleaseYear() + "\n" + "═════════════════════════════════"));
+            games.values().forEach(game -> System.out.println("═════════════════════════════════" + "\n"+"  ♦ Nombre: " + game.getName() + "\n" + "  ♦ Género: " + game.getGenre() + "\n" + "  ♦ Año de lanzamiento: " + game.getReleaseYear() + "\n" + "═════════════════════════════════"));
         }
     }
 
     public void sortGamesByName() {
         games.values().stream()
             .sorted(Comparator.comparing(Game::getName))
-            .forEach(game -> System.out.println(("═════════════════════════════════" + "\n"+"  ═ Nombre: " + game.getName() + "\n" + "  ═ Género: " + game.getGenre() + "\n" + "  ═ Año de lanzamiento: " + game.getReleaseYear() + "\n" + "═════════════════════════════════")));
+            .forEach(game -> System.out.println(("═════════════════════════════════" + "\n"+"  ♦ Nombre: " + game.getName() + "\n" + "  ♦ Género: " + game.getGenre() + "\n" + "  ♦ Año de lanzamiento: " + game.getReleaseYear() + "\n" + "═════════════════════════════════")));
     }
 
     public void sortGamesByGenre() {
         games.values().stream()
             .sorted(Comparator.comparing(Game::getGenre))
-            .forEach(game -> System.out.println(("═════════════════════════════════" + "\n"+"  ═ Nombre: " + game.getName() + "\n" + "  ═ Género: " + game.getGenre() + "\n" + "  ═ Año de lanzamiento: " + game.getReleaseYear() + "\n" + "═════════════════════════════════")));
+            .forEach(game -> System.out.println(("═════════════════════════════════" + "\n"+"  ♦ Nombre: " + game.getName() + "\n" + "  ♦ Género: " + game.getGenre() + "\n" + "  ♦ Año de lanzamiento: " + game.getReleaseYear() + "\n" + "═════════════════════════════════")));
     }
 
 
