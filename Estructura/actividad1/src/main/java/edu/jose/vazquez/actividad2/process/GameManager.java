@@ -1,14 +1,21 @@
-package edu.jose.vazquez.process;
-import edu.jose.vazquez.models.Game;
+package edu.jose.vazquez.actividad2.process;
+import edu.jose.vazquez.actividad2.models.Game;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
 public class GameManager {
     private HashMap<String, Game> games;
+    private Stack<Game> gameHistory;
+    private Queue<Game> updateQueue;
 
     public GameManager() {
         this.games = new HashMap<>();
+        this.gameHistory = new Stack<>();
+        this.updateQueue = new LinkedList<>();
         addGame("Persona 5", "JRPG", 2016);
         addGame("The Legend of Zelda: Breath of the Wild", "Action-Adventure", 2017);
         addGame("Super Mario Odyssey", "Platformer", 2017);
@@ -24,6 +31,7 @@ public class GameManager {
     public void addGame(String name, String genre, int releaseYear) {
         Game newGame = new Game(name, genre, releaseYear);
         games.put(name, newGame);
+        gameHistory.push(newGame);
     }
 
     public void removeGame(String name) {
@@ -45,6 +53,8 @@ public class GameManager {
         System.out.println("╚══════════════════════════════════════════════════╝");
         return;
     }
+    Game removedGame = games.get(keyToRemove);
+    gameHistory.push(removedGame);
     games.remove(keyToRemove);
     }
 
@@ -65,7 +75,8 @@ public void updateGame(String name, String genre, int releaseYear) {
         Game game = games.get(keyToUpdate);
         game.setGenre(genre);
         game.setReleaseYear(releaseYear);
-       
+        updateQueue.add(game); 
+        //System.out.println("Actualización programada para: " + game.getName());
     } 
 }
 public void searchGame(String name) {
@@ -128,5 +139,31 @@ public void searchGame(String name) {
     }
     return null;
 }
+
+    public void undoLastAction() {
+        if (!gameHistory.isEmpty()) {
+            Game lastGame = gameHistory.pop();
+            if (games.containsKey(lastGame.getName())) {
+                // Si existe, significa que fue agregado antes, ahora lo eliminamos
+                games.remove(lastGame.getName());
+                System.out.println("Deshacer acción: eliminado " + lastGame.getName());
+            } else {
+                // Si no existe, significa que fue eliminado antes, ahora lo agregamos de nuevo
+                games.put(lastGame.getName(), lastGame);
+                System.out.println("Deshacer acción: agregado " + lastGame.getName());
+            }
+        } else {
+            System.out.println("No hay acciones para deshacer.");
+        }
+    }
+
+    public void processNextUpdate() {
+        if (!updateQueue.isEmpty()) {
+            Game nextGame = updateQueue.poll();
+            System.out.println("Procesando actualización de: " + nextGame.getName() + " -> Género: " + nextGame.getGenre() + ", Año: " + nextGame.getReleaseYear());
+        } else {
+            System.out.println("No hay actualizaciones pendientes.");
+        }
+    }
     
 }

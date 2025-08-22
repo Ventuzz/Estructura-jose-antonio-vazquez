@@ -1,4 +1,4 @@
-package edu.jose.vazquez.models;
+package edu.jose.vazquez.actividad2.models;
 
 public class Game {
     private String name;

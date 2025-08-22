@@ -1,6 +1,6 @@
-package edu.jose.vazquez.ui;
-import edu.jose.vazquez.models.Game;
-import edu.jose.vazquez.process.GameManager;
+package edu.jose.vazquez.actividad2.ui;
+import edu.jose.vazquez.actividad2.models.Game;
+import edu.jose.vazquez.actividad2.process.GameManager;
 import java.io.IOException;
 
 

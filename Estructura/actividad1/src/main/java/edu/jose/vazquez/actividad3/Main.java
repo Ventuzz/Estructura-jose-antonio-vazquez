@@ -1,6 +1,5 @@
-package edu.jose.vazquez;
-
-import edu.jose.vazquez.ui.CLI;
+package edu.jose.vazquez.actividad3;
+import edu.jose.vazquez.actividad3.ui.CLI;
 
 public class Main {
     public static void main(String[] args) {
