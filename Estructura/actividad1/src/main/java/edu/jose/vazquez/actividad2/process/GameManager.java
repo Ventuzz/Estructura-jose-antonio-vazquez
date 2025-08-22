@@ -1,5 +1,5 @@
-package edu.jose.vazquez.process;
-import edu.jose.vazquez.models.Game;
+package edu.jose.vazquez.actividad2.process;
+import edu.jose.vazquez.actividad2.models.Game;
 
 import java.util.Comparator;
 import java.util.HashMap;
