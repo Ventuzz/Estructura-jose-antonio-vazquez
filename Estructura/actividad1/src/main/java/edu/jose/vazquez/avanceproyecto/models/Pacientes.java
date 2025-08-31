@@ -1,5 +1,7 @@
 package edu.jose.vazquez.avanceproyecto.models;
 
+import java.sql.Date;
+
 public class Pacientes {
     private String nombre;
     private int edad;
@@ -8,6 +10,11 @@ public class Pacientes {
     private int prioridad;
     private String tratamiento;
     private String doctor;
+    private Date fechaIngreso;
+    private Date fechaNacimiento;
+    private Date fechaAlta;
+    private String sexo;
+    
 
     public Pacientes(String nombre, int edad, String enfermedad, int prioridad) {
         this.nombre = nombre;
@@ -17,10 +24,45 @@ public class Pacientes {
         this.tratamiento = "Esperando diagnóstico";
         this.estado = "En espera";
         this.doctor = "No asignado";
+        this.fechaIngreso = new Date(System.currentTimeMillis());
+        this.fechaNacimiento = null;
+        this.fechaAlta = null;
+        this.sexo = "No especificado";
     }
 
     public String getEstado() {
         return estado;
+    }
+    public Date getFechaIngreso() {
+        return fechaIngreso;
+    }
+
+    public Date getFechaAlta() {
+        return fechaAlta;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public void setFechaIngreso(Date fechaIngreso) {
+        this.fechaIngreso = fechaIngreso;
+    }
+
+    public void setFechaAlta(Date fechaAlta) {
+        this.fechaAlta = fechaAlta;
+    }
+
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 
     public String getDoctor() {
