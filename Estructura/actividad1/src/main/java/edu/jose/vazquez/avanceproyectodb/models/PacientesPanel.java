@@ -3,7 +3,6 @@ package edu.jose.vazquez.avanceproyectodb.models;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import edu.jose.vazquez.avanceproyectodb.process.Database;
 
 public class PacientesPanel extends JPanel {
     private final JTextField tfNombre = new JTextField(20);
@@ -11,13 +10,14 @@ public class PacientesPanel extends JPanel {
     private final JComboBox<String> cbSexo = new JComboBox<>(new String[]{"M","F","Otro"});
     private final JTextField tfTel   = new JTextField(12);
     private final JTextField tfEmail = new JTextField(18);
-    private final JComboBox<String> cbEstado = new JComboBox<>(new String[]{"En espera","En evaluacion","Atendido"});
+    // Estados actualizados según el ENUM de la BD
+    private final JComboBox<String> cbEstado = new JComboBox<>(new String[]{"EN_ESPERA","EN_EVALUACION","ATENDIDO"});
     private final JSpinner spPrioridad = new JSpinner(new SpinnerNumberModel(3,1,5,1));
-    private final JCheckBox chkInconsciente = new JCheckBox("Paciente inconsciente");
+    private final JCheckBox chkInconsciente = new JCheckBox("Paciente inconsciente/desconocido");
     private final JTextField tfBuscar = new JTextField(18);
 
     private final DefaultTableModel model = new DefaultTableModel(
-            new Object[]{"ID","Nombre","Sexo","Teléfono","Email","Fecha Nac.","Estado","Prioridad"}, 0) {
+            new Object[]{"ID","Nombre Completo","Sexo","Teléfono","Email","Fecha Nac.","Estado","Prioridad"}, 0) {
         @Override public boolean isCellEditable(int r, int c) { return false; }
     };
     private final JTable table = new JTable(model);
@@ -29,7 +29,6 @@ public class PacientesPanel extends JPanel {
     public PacientesPanel() {
         setLayout(new BorderLayout(10,10));
 
-        // Form
         JPanel form = new JPanel(new GridBagLayout());
         form.setBorder(BorderFactory.createTitledBorder("Paciente"));
         GridBagConstraints c = new GridBagConstraints();
@@ -55,17 +54,16 @@ public class PacientesPanel extends JPanel {
 
         JButton btnCrear = new JButton("Registrar");
         JButton btnGuardar = new JButton("Guardar cambios");
-        JButton btnRefrescar = new JButton("Refrescar");
-        JButton btnLimpiar = new JButton("Limpiar");
+        JButton btnLimpiar = new JButton("Limpiar Formulario");
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        actions.add(btnCrear); actions.add(btnGuardar); actions.add(btnRefrescar); actions.add(btnLimpiar);
+        actions.add(btnCrear); actions.add(btnGuardar); actions.add(btnLimpiar);
 
         JPanel search = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton btnBuscar = new JButton("Buscar");
         JButton btnTodos  = new JButton("Todos");
         btnBuscar.addActionListener(e -> cargarTabla(tfBuscar.getText().trim()));
         btnTodos.addActionListener(e -> { tfBuscar.setText(""); cargarTabla(null); });
-        search.add(new JLabel("Buscar:")); search.add(tfBuscar); search.add(btnBuscar); search.add(btnTodos);
+        search.add(new JLabel("Buscar por nombre:")); search.add(tfBuscar); search.add(btnBuscar); search.add(btnTodos);
 
         JPanel left = new JPanel();
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
@@ -85,21 +83,15 @@ public class PacientesPanel extends JPanel {
         // Listeners
         chkInconsciente.addActionListener(e -> {
             boolean inc = chkInconsciente.isSelected();
-            boolean enable = !inc;
-            tfNombre.setEnabled(enable); tfFecha.setEnabled(enable); cbSexo.setEnabled(enable);
-            tfTel.setEnabled(enable); tfEmail.setEnabled(enable);
-            cbEstado.setEnabled(enable); spPrioridad.setEnabled(enable);
             if (inc) {
-                tfNombre.setText("Paciente Inconsciente");
-                tfFecha.setText(""); cbSexo.setSelectedIndex(0);
-                tfTel.setText(""); tfEmail.setText("");
-                cbEstado.setSelectedItem("En evaluacion"); spPrioridad.setValue(1);
+                limpiar();
+                tfNombre.setText("NN");
+                cbEstado.setSelectedItem("EN_EVALUACION"); spPrioridad.setValue(1);
             }
         });
 
         btnCrear.addActionListener(e -> registrar());
         btnGuardar.addActionListener(e -> guardarCambios());
-        btnRefrescar.addActionListener(e -> cargarTabla(null));
         btnLimpiar.addActionListener(e -> limpiar());
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -113,8 +105,7 @@ public class PacientesPanel extends JPanel {
             tfEmail.setText(String.valueOf(model.getValueAt(row, 4)));
             tfFecha.setText(String.valueOf(model.getValueAt(row, 5)));
             cbEstado.setSelectedItem(String.valueOf(model.getValueAt(row, 6)));
-            spPrioridad.setValue(Integer.parseInt(String.valueOf(model.getValueAt(row, 7))));
-            chkInconsciente.setSelected("Paciente Inconsciente".equals(tfNombre.getText()));
+            spPrioridad.setValue(model.getValueAt(row, 7));
         });
 
         cargarTabla(null);
@@ -122,32 +113,24 @@ public class PacientesPanel extends JPanel {
 
     private void registrar() {
         try {
-            if (!tfTel.getText().trim().isBlank() && !tfTel.getText().trim().matches("\\d+")) {
-                JOptionPane.showMessageDialog(this, "El teléfono debe ser numérico.", "Validación", JOptionPane.WARNING_MESSAGE);
+            var p = new PacienteService.Paciente();
+            p.nombreCompleto = tfNombre.getText().trim();
+            if (p.nombreCompleto.isBlank()) {
+                JOptionPane.showMessageDialog(this, "El nombre completo es obligatorio.", "Validación", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            var p = new PacienteService.Paciente();
-            p.nombre = (chkInconsciente.isSelected() || tfNombre.getText().isBlank()) ? "Paciente Inconsciente" : tfNombre.getText().trim();
             p.sexo = (String) cbSexo.getSelectedItem();
             p.telefono = tfTel.getText().trim();
             p.correo = tfEmail.getText().trim();
-            p.fechaNacimiento = tfFecha.getText().trim();
-            p.estado = chkInconsciente.isSelected() ? "En evaluacion" : (String) cbEstado.getSelectedItem();
-            p.prioridad = chkInconsciente.isSelected() ? 1 : (Integer) spPrioridad.getValue();
+            p.fechaNacimiento = tfFecha.getText().trim().isBlank() ? null : tfFecha.getText().trim();
+            p.estado = (String) cbEstado.getSelectedItem();
+            p.prioridad = (Integer) spPrioridad.getValue();
 
             int id = pacienteService.crear(p);
-
-            if (chkInconsciente.isSelected()) {
-                String dx = JOptionPane.showInputDialog(this, "Diagnóstico (obligatorio)\nEstado: En evaluacion, Prioridad: 1");
-                if (dx == null || dx.isBlank()) throw new IllegalArgumentException("El diagnóstico es obligatorio.");
-                atencionService.registrar(id, 0, 1, "En evaluacion", dx, "");
-            }
-
             cargarTabla(null);
             JOptionPane.showMessageDialog(this, "Paciente registrado. ID: " + id);
             limpiar();
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Validación", JOptionPane.WARNING_MESSAGE);
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -160,27 +143,23 @@ public class PacientesPanel extends JPanel {
                 return;
             }
             if (pacienteService.ultimoEstadoEsAlta(selectedPacienteId)) {
-                JOptionPane.showMessageDialog(this, "El paciente está 'Atendido'. No se puede actualizar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "El paciente está 'ATENDIDO'. No se puede actualizar.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            if (!tfTel.getText().trim().isBlank() && !tfTel.getText().trim().matches("\\d+")) {
-                JOptionPane.showMessageDialog(this, "El teléfono debe ser numérico.", "Validación", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
+            
             var p = new PacienteService.Paciente();
             p.id = selectedPacienteId;
-            p.nombre = tfNombre.getText().trim();
+            p.nombreCompleto = tfNombre.getText().trim();
             p.sexo = (String) cbSexo.getSelectedItem();
             p.telefono = tfTel.getText().trim();
             p.correo = tfEmail.getText().trim();
-            p.fechaNacimiento = tfFecha.getText().trim();
+            p.fechaNacimiento = tfFecha.getText().trim().isBlank() ? null : tfFecha.getText().trim();
             p.estado = (String) cbEstado.getSelectedItem();
             p.prioridad = (Integer) spPrioridad.getValue();
 
             pacienteService.actualizarBasico(p);
             cargarTabla(tfBuscar.getText().trim().isBlank()? null : tfBuscar.getText().trim());
-            JOptionPane.showMessageDialog(this, "Paciente actualizado (auditoría registrada).");
+            JOptionPane.showMessageDialog(this, "Paciente actualizado.");
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -190,7 +169,7 @@ public class PacientesPanel extends JPanel {
         model.setRowCount(0);
         for (var p : pacienteService.listar(filtro)) {
             model.addRow(new Object[]{
-                    p.id, p.nombre, p.sexo, p.telefono, p.correo,
+                    p.id, p.nombreCompleto, p.sexo, p.telefono, p.correo,
                     p.fechaNacimiento==null? "" : p.fechaNacimiento,
                     p.estado, p.prioridad
             });
@@ -199,11 +178,8 @@ public class PacientesPanel extends JPanel {
 
     private void limpiar() {
         selectedPacienteId = null;
-        chkInconsciente.setSelected(false);
-        tfNombre.setEnabled(true); tfFecha.setEnabled(true); cbSexo.setEnabled(true);
-        tfTel.setEnabled(true); tfEmail.setEnabled(true); cbEstado.setEnabled(true); spPrioridad.setEnabled(true);
         tfNombre.setText(""); tfFecha.setText(""); cbSexo.setSelectedIndex(0);
-        tfTel.setText(""); tfEmail.setText(""); cbEstado.setSelectedItem("En espera"); spPrioridad.setValue(3);
+        tfTel.setText(""); tfEmail.setText(""); cbEstado.setSelectedItem("EN_ESPERA"); spPrioridad.setValue(3);
         table.clearSelection();
         tfNombre.requestFocusInWindow();
     }
