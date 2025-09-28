@@ -1,31 +1,30 @@
 package edu.jose.vazquez.avanceproyectodb;
 
-import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import edu.jose.vazquez.avanceproyectodb.models.AtencionPanel;
-import edu.jose.vazquez.avanceproyectodb.models.DoctoresPanel;
-import edu.jose.vazquez.avanceproyectodb.models.PacientesPanel;
-
-import java.awt.*;
+import javax.swing.SwingUtilities;
 
 public class Main {
-    public static void main(String[] args) {
-        // Look & Feel del sistema (opcional)
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch (Exception ignored) {}
+  private static final AtomicBoolean launched = new AtomicBoolean(false);
 
-        EventQueue.invokeLater(() -> {
-            JFrame f = new JFrame("Gestión Hospitalaria (Swing)");
-            f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            f.setSize(1000, 650);
-
-            JTabbedPane tabs = new JTabbedPane();
-            tabs.addTab("Pacientes", new PacientesPanel());
-            tabs.addTab("Doctores", new DoctoresPanel());
-            tabs.addTab("Atención", new AtencionPanel());
-
-            f.setContentPane(tabs);
-            f.setLocationRelativeTo(null);
-            f.setVisible(true);
-        });
+  private static void openOnce() {
+    if (launched.compareAndSet(false, true)) {
+      edu.jose.vazquez.avanceproyectodb.ui.MainDashboard.launch();
     }
+  }
+
+  public static void main(String[] args){
+    SwingUtilities.invokeLater(() -> {
+      edu.jose.vazquez.avanceproyectodb.process.HospitalLoader loader =
+          new edu.jose.vazquez.avanceproyectodb.process.HospitalLoader();
+      loader.addWindowListener(new WindowAdapter() {
+        @Override public void windowClosed(WindowEvent e) { openOnce(); }
+        @Override public void windowClosing(WindowEvent e) { openOnce(); }
+      });
+      loader.setLocationRelativeTo(null);
+      loader.setVisible(true);
+    });
+  }
 }

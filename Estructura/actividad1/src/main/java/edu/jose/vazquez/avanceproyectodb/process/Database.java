@@ -1,6 +1,8 @@
 package edu.jose.vazquez.avanceproyectodb.process;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class Database {
     private static final String URL  = "jdbc:mysql://localhost:3306/avance_proyecto_db";

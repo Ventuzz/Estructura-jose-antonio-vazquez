@@ -1,8 +1,13 @@
 package edu.jose.vazquez.avanceproyectodb.models;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.jose.vazquez.avanceproyectodb.process.Database;
 
 public class AtencionService {
@@ -15,6 +20,51 @@ public class AtencionService {
         public String tratamiento;
         public Timestamp fechaRegistro;
         public Timestamp alta;
+    }
+
+        public static void cerrarUltimaAtencionDePaciente(int pacienteId) {
+        // MySQL: primero buscamos el atencion_id más reciente sin alta
+        final String findSql =
+            "SELECT atencion_id FROM atenciones " +
+            "WHERE paciente_id = ? AND dado_de_alta IS NULL " +
+            "ORDER BY fecha_registro DESC LIMIT 1";
+
+        final String updSql =
+            "UPDATE atenciones SET dado_de_alta = NOW() WHERE atencion_id = ?";
+
+        try (Connection con = Database.get()) {
+            con.setAutoCommit(false);
+            Long atencionId = null;
+
+            try (PreparedStatement ps = con.prepareStatement(findSql)) {
+                ps.setInt(1, pacienteId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) atencionId = rs.getLong(1);
+                }
+            }
+
+            if (atencionId != null) {
+                try (PreparedStatement ps = con.prepareStatement(updSql)) {
+                    ps.setLong(1, atencionId);
+                    ps.executeUpdate();
+                }
+            }
+            con.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error cerrando atención de paciente", e);
+        }
+    }
+
+    /** Variante por atencion_id específico (si ya lo tienes en la UI). */
+    public static void cerrarAtencion(long atencionId) {
+        final String sql = "UPDATE atenciones SET dado_de_alta = NOW() WHERE atencion_id = ?";
+        try (Connection con = Database.get();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setLong(1, atencionId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error cerrando atención", e);
+        }
     }
 
     public void registrar(int pacienteId, int doctorId, int prioridad, String estado, String dx, String tx) {
