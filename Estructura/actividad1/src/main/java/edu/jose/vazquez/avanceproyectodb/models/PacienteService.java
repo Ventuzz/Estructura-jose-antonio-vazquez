@@ -1,13 +1,13 @@
 package edu.jose.vazquez.avanceproyectodb.models;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import edu.jose.vazquez.avanceproyectodb.process.Database;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import edu.jose.vazquez.avanceproyectodb.process.Database;
 
 public class PacienteService {
@@ -21,6 +21,17 @@ public class PacienteService {
         public String sexo;
         public String telefono;
         public String correo;
+    }
+
+        public static void marcarAtendido(int pacienteId) {
+        final String sql = "UPDATE pacientes SET estado = 'ATENDIDO' WHERE paciente_id = ?";
+        try (Connection con = Database.get();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, pacienteId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error marcando paciente como ATENDIDO", e);
+        }
     }
 
     public List<Paciente> listar(String filtro) {
